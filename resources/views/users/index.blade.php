@@ -10,9 +10,85 @@
     @extends('layouts.dashboard')
 
     @section('content')
+    <div>
+        @if (session('msg'))
+            <h1>{{session('msg')}}</h1>
+        @endif
+
+        <ul>
+            @foreach ($errors as $error)
+            <li>{{$error}}</li>
+        @endforeach
+        </ul>
+    </div>
         <div class="container-fluid">
             <div>
-                <a href="" class="btn btn-outline-success"><i class="bi bi-plus"></i></a>
+                <a href="{{route('users.create')}}" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-plus"></i></a>
+                <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Add User</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{route('users.store')}}" method="POST">
+                @csrf
+                <div class="row mb-3">
+                    <label for="username" class="col-sm-2 col-form-label">Username</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" name="name" id="username">
+                    @if ($errors->has('name'))
+                    <span>{{$errors->first('name')}}</span>
+                    @endif
+                    </div>
+                  </div>
+                <div class="row mb-3">
+                  <label for="email" class="col-sm-2 col-form-label">Email</label>
+                  <div class="col-sm-10">
+                    <input type="email" class="form-control" name="email" id="email">
+                        @if ($errors->has('email'))
+                        <span>{{$errors->first('email')}}</span>
+                        @endif
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="password" class="col-sm-2 col-form-label">Password</label>
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control" name="password" id="password">
+                        @if ($errors->has('password'))
+                        <span style="color: red;">{{$errors->first('password')}}</span>
+                        @endif
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+              </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
             </div>
         </div>
         <div>
@@ -31,7 +107,7 @@
                             <td>{{$user->id}}</td>
                             <td>{{$user->name}}</td>
                             <td>{{$user->email}}</td>
-                            <td><i class="bi bi-pencil-square btn btn-outline-success"></i></td>
+                            <td><a href="{{route('users.edit', $user->id)}}"><i class="bi bi-pencil-square btn btn-outline-success"></i></a></td>
                             <td><i class="bi bi-trash3 btn btn-outline-danger"></i></td>
                         </tr>
                     @endforeach
