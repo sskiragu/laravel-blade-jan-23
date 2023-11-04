@@ -15,7 +15,8 @@
     {{-- Navigation --}}
     @hasrole('Admin')
         <a href="{{route('users.index')}}">Manage Users</a>
-        <a href="">Manage Roles</a>
+
+        <a href="{{route('roles.index')}}">Manage Roles</a>
     @endhasrole
 
     <a href="">Manage Products</a>

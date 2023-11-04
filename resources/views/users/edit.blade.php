@@ -21,6 +21,18 @@
               <label for="email" class="form-label">Email address</label>
               <input type="email" class="form-control" name="email" id="email" value="{{$user->email}}" aria-describedby="emailHelp">
             </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" name="password" id="email" aria-describedby="emailHelp" placeholder="Enter new password">
+            </div>
+            <div class="mb-3">
+              <label for="roles" class="form-label">Roles</label>
+              <select class="form-select" multiple name="roles[]" id="roles" aria-label="Multiple select example">
+                @foreach ($roles as $role)
+                    <option value="{{$role}}">{{$role}}</option>
+                @endforeach
+              </select>
+            </div>
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
     </div>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -34,4 +35,5 @@ Route::group(['middleware' => ['auth']], function(){
     Route::view('/dashboard', 'dashboard');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
 });

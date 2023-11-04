@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -14,7 +17,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('users.index', compact('users'));
+        $roles  = Role::pluck('name', 'name')->all();
+        // $user_role = $user->roles->pluck('name', 'name')->all();
+        return view('users.index', compact('users', 'roles'));
     }
 
     /**
@@ -64,7 +69,9 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::find($id);
-        return view('users.edit', compact('user'));
+        $roles  = Role::pluck('name', 'name')->all();
+        $user_role = $user->roles->pluck('name', 'name')->all();
+        return view('users.edit', compact('user', 'roles', 'user_role'));
     }
 
     /**
@@ -72,13 +79,31 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // return dd($request->all());
+        try {
+            // return dd($request->all());
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'password' => 'nullable',
+            'roles' => 'required'
+        ]);
+        $input = $request->all();
+        if(!empty($input['password'])){ 
+            $input['password'] = Hash::make($input['password']);
+        }else{
+            $input = Arr::except($input,array('password'));    
+        }
         $user = User::find($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
-
-        return redirect()->route('users.index')->with('msg', 'User details updated.');
+        $user->update($input);
+        DB::table('model_has_roles')->where('model_id',$id)->delete();
+    
+        $user->assignRole($request->input('roles', []));
+    
+        return redirect()->route('users.index')
+                        ->with('success','User updated successfully');
+        } catch (\Throwable $th) {
+            return $th;
+        }
     }
 
     /**
@@ -86,6 +111,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // return $id;
+        $user = User::find($id);
+        $user->delete();
+        return redirect()->route('users.index')->with('msg', 'User deleted');
     }
 }
